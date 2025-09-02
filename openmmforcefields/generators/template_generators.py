@@ -1927,6 +1927,13 @@ class EspalomaTemplateGenerator(SmallMoleculeTemplateGenerator, OpenMMSystemMixi
             charge_method=self._charge_method,
             forcefield=self._reference_forcefield,
         )
+
+        # Remove CMMotionRemover if present.
+        for f_idx, force in enumerate(system.getForces()):
+            if force.getName() == "CMMotionRemover": 
+                _logger.warning(f"Removed {force.getName()} at index {f_idx}.")
+                system.removeForce(f_idx)
+
         _logger.info(
             f"Generating a system with charge method {self._charge_method} and "
             f"{self._reference_forcefield} to assign nonbonded parameters"
